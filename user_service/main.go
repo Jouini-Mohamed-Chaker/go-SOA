@@ -15,16 +15,23 @@ import (
 )
 
 type User struct {
-	ID int64 `json:"id"`
-	Username string `json:"username"`
-	Email string `json:"email"`
+	ID        int64  `json:"id"`
+	Username  string `json:"username"`
+	Email     string `json:"email"`
 	FirstName string `json:"firstName"`
-	LastName string `json:"lastName"`
+	LastName  string `json:"lastName"`
+}
+
+type PaginatedResponse struct {
+	Page  int    `json:"page"`
+	Limit int    `json:"limit"`
+	Total int    `json:"total"`
+	Data  []User `json:"data"`
 }
 
 var db *sql.DB
 
-func main(){
+func main() {
 	var err error
 
 	dbHost := getEnv("DB_HOST", "localhost")
@@ -32,15 +39,14 @@ func main(){
 	dbUser := getEnv("DB_USER", "postgres")
 	dbPassword := getEnv("DB_PASSWORD", "postgres")
 	dbName := getEnv("DB_NAME", "library")
-	
+
 	connectionString := fmt.Sprintf("host=%s port=%s user=%s password=%s dbname=%s sslmode=disable", dbHost, dbPort, dbUser, dbPassword, dbName)
 
-		db, err = sql.Open("postgres", connectionString)
+	db, err = sql.Open("postgres", connectionString)
 	if err != nil {
 		log.Fatalf("sql.Open error: %v", err)
 	}
 
-	// Try pinging the DB several times (docker bring-up may be slower)
 	const maxAttempts = 30
 	for i := 1; i <= maxAttempts; i++ {
 		err = db.Ping()
@@ -73,8 +79,25 @@ func getEnv(key, defaultValue string) string {
 	return value
 }
 
-func getAllUsers(w http.ResponseWriter, r *http.Request){
-	rows , err := db.Query("SELECT id, username, email, first_name, last_name FROM users")
+func getAllUsers(w http.ResponseWriter, r *http.Request) {
+	page, limit := getPaginationParams(r)
+	offset := (page - 1) * limit
+
+	// Get total count
+	var total int
+	err := db.QueryRow("SELECT COUNT(*) FROM users").Scan(&total)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	rows, err := db.Query(`
+	SELECT id, username, email, first_name, last_name 
+	FROM users
+	ORDER BY id
+	LIMIT $1 OFFSET $2`,
+		limit, offset)
+
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
@@ -91,18 +114,31 @@ func getAllUsers(w http.ResponseWriter, r *http.Request){
 		users = append(users, u)
 	}
 
+	// Initialize empty slice if nil
+	if users == nil {
+		users = []User{}
+	}
+
+	response := PaginatedResponse{
+		Page:  page,
+		Limit: limit,
+		Total: total,
+		Data:  users,
+	}
+
 	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(users)
+	json.NewEncoder(w).Encode(response)
 }
 
-func getUserByID(w http.ResponseWriter, r *http.Request){
+func getUserByID(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	id, err := strconv.ParseInt(vars["id"], 10, 64)
 	if err != nil {
 		http.Error(w, "Invalid user ID", http.StatusBadRequest)
+		return // FIX: Added missing return
 	}
 
-	var u User 
+	var u User
 	err = db.QueryRow("SELECT id, username, email, first_name, last_name FROM users WHERE id = $1", id).Scan(&u.ID, &u.Username, &u.Email, &u.FirstName, &u.LastName)
 
 	if err == sql.ErrNoRows {
@@ -117,14 +153,20 @@ func getUserByID(w http.ResponseWriter, r *http.Request){
 	json.NewEncoder(w).Encode(u)
 }
 
-func createUser(w http.ResponseWriter, r *http.Request){
-	var u User 
+func createUser(w http.ResponseWriter, r *http.Request) {
+	var u User
 	if err := json.NewDecoder(r.Body).Decode(&u); err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
 
-	err := db.QueryRow("INSERT INTO users (username, email, first_name, last_name) VALUES ($1, $2, $3, $4) RETURNING id", u.Username, u.Email, u.FirstName, u.LastName,).Scan(&u.ID)
+	// Validate required fields
+	if u.Username == "" || u.Email == "" {
+		http.Error(w, "Username and email are required fields", http.StatusBadRequest)
+		return
+	}
+
+	err := db.QueryRow("INSERT INTO users (username, email, first_name, last_name) VALUES ($1, $2, $3, $4) RETURNING id", u.Username, u.Email, u.FirstName, u.LastName).Scan(&u.ID)
 
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -136,7 +178,7 @@ func createUser(w http.ResponseWriter, r *http.Request){
 	json.NewEncoder(w).Encode(u)
 }
 
-func updateUser(w http.ResponseWriter, r *http.Request){
+func updateUser(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	id, err := strconv.ParseInt(vars["id"], 10, 64)
 	if err != nil {
@@ -147,6 +189,7 @@ func updateUser(w http.ResponseWriter, r *http.Request){
 	var u User
 	if err := json.NewDecoder(r.Body).Decode(&u); err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
+		return // FIX: Added missing return
 	}
 
 	_, err = db.Exec(
@@ -164,7 +207,7 @@ func updateUser(w http.ResponseWriter, r *http.Request){
 	json.NewEncoder(w).Encode(u)
 }
 
-func deleteUser(w http.ResponseWriter, r *http.Request){
+func deleteUser(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	id, err := strconv.ParseInt(vars["id"], 10, 64)
 	if err != nil {
@@ -179,4 +222,20 @@ func deleteUser(w http.ResponseWriter, r *http.Request){
 	}
 
 	w.WriteHeader(http.StatusNoContent)
+}
+
+func getPaginationParams(r *http.Request) (page, limit int) {
+	query := r.URL.Query()
+
+	page, _ = strconv.Atoi(query.Get("page"))
+	if page < 1 {
+		page = 1
+	}
+
+	limit, _ = strconv.Atoi(query.Get("limit"))
+	if limit < 1 {
+		limit = 10
+	}
+
+	return
 }

@@ -47,21 +47,30 @@ Book {
 
 ### 2.2 REST Endpoints
 
-**GET /api/books**
-- Get all books
+**GET /api/books?page={page}&limit={limit}**
+- Returns a paginated list of books
+- Query Params:
+  - page (optional, default = 1)
+  - limit (optional, default = 10)
 - Response: List of books
 ```json
-[
-  {
-    "id": 1,
-    "isbn": "9781234567890",
-    "title": "Sample Book",
-    "author": "John Doe",
-    "publishYear": 2020,
-    "category": "Fiction",
-    "availableQuantity": 5
-  }
-]
+{
+  "page": 1,
+  "limit": 10,
+  "data": [
+    {
+      "id": 1,
+      "isbn": "9781234567890",
+      "title": "Sample Book",
+      "author": "John Doe",
+      "publishYear": 2020,
+      "category": "Fiction",
+      "availableQuantity": 5
+    }, 
+    {...}, 
+    ...
+  ]
+}
 ```
 
 **GET /api/books/{id}**
@@ -96,6 +105,35 @@ Book {
 - Search books by title
 - Response: List of matching books
 
+**GET /api/books/search?title={title}&page={page}&limit={limit}**
+- Search books by title substring (case-insensitive).
+- Supports pagination.
+- Query params:
+  - title (required)
+  - page (optional, default = 1)
+  - limit (optional, default = 10)
+- Response:
+```json
+{
+  "page": 1,
+  "limit": 10,
+  "total": 3,
+  "data": [
+    {
+      "id": 1,
+      "isbn": "9781234567890",
+      "title": "Sample Book",
+      "author": "John Doe",
+      "publishYear": 2020,
+      "category": "Fiction",
+      "availableQuantity": 5
+    }, 
+    {...},
+    ...
+  ]
+}
+```
+
 ---
 
 ## 3. User Service (REST)
@@ -113,9 +151,29 @@ User {
 
 ### 3.2 REST Endpoints
 
-**GET /api/users**
-- Get all users
-- Response: List of users
+**GET /api/users?page={page}&limit={limit}**
+- Returns paginated list of users.
+- Query params:
+  - page (optional, default = 1)
+  - limit (optional, default = 10)
+- Response:
+```json
+{
+  "page": 1,
+  "limit": 10,
+  "total": 12,
+  "data": [
+    {
+      "username": "johndoe",
+      "email": "john@example.com",
+      "firstName": "John",
+      "lastName": "Doe"
+    }, 
+    {...}
+    ...
+  ]
+}
+```
 
 **GET /api/users/{id}**
 - Get user by ID
