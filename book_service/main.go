@@ -11,6 +11,7 @@ import (
 	"time"
 
 	"github.com/gorilla/mux"
+	"github.com/rs/cors"
 	_ "github.com/lib/pq"
 )
 
@@ -63,7 +64,6 @@ func main() {
 	}
 
 	router := mux.NewRouter()
-	// IMPORTANT: Register /search BEFORE /{id} to avoid routing conflicts
 	router.HandleFunc("/api/books/search", searchBookByTitle).Methods("GET")
 	router.HandleFunc("/api/books", getAllBooks).Methods("GET")
 	router.HandleFunc("/api/books/{id}", getBookByID).Methods("GET")
@@ -71,8 +71,17 @@ func main() {
 	router.HandleFunc("/api/books/{id}", updateBook).Methods("PUT")
 	router.HandleFunc("/api/books/{id}", deleteBook).Methods("DELETE")
 
+	c := cors.New(cors.Options{
+		AllowedOrigins: []string{"*"},
+		AllowedMethods:   []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
+        AllowedHeaders:   []string{"Content-Type", "Authorization"},
+        AllowCredentials: true,
+	})
+
+	handler := c.Handler(router)
+
 	log.Println("Book Service running on port 8081")
-	log.Fatal(http.ListenAndServe(":8081", router))
+	log.Fatal(http.ListenAndServe(":8081", handler))
 }
 
 func getEnv(key, defaultValue string) string {

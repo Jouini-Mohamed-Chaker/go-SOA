@@ -321,14 +321,33 @@ test_return_already_returned() {
 test_create_multiple_loans() {
     print_header "${BOOK} TEST 7: Create Multiple Loans"
     
-    users=(2 3 1)
-    books=(2 3 4)
+    print_info "Fetching available users and books..."
     
-    for i in "${!users[@]}"; do
-        user_id=${users[$i]}
-        book_id=${books[$i]}
+    # Fetch users from REST API
+    users_response=$(curl -s "http://localhost:8082/api/users?limit=3")
+    books_response=$(curl -s "http://localhost:8081/api/books?limit=4")
+    
+    # Extract IDs (assuming JSON response)
+    user_ids=($(echo "$users_response" | grep -oP '"id":\s*\K\d+' | head -3))
+    book_ids=($(echo "$books_response" | grep -oP '"id":\s*\K\d+' | head -4))
+    
+    if [ ${#user_ids[@]} -lt 2 ] || [ ${#book_ids[@]} -lt 3 ]; then
+        print_error "Not enough users or books in database to run this test"
+        print_info "Please add at least 2 users and 3 books"
+        return
+    fi
+    
+    # Create loan combinations
+    test_combinations=(
+        "${user_ids[0]} ${book_ids[1]}"
+        "${user_ids[1]} ${book_ids[2]}"
+        "${user_ids[0]} ${book_ids[3]}"
+    )
+    
+    for i in "${!test_combinations[@]}"; do
+        read user_id book_id <<< "${test_combinations[$i]}"
         
-        print_test "Creating loan ${i+1}/3 - User: $user_id, Book: $book_id"
+        print_test "Creating loan $((i+1))/3 - User: $user_id, Book: $book_id"
         
         response=$(soap_request "createLoan" \
             "<createLoanRequest xmlns=\"http://library.example.com/loan\">
