@@ -1,0 +1,249 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions 
+  name="LoanService"
+  targetNamespace="http://library.example.com/loan"
+  xmlns="http://schemas.xmlsoap.org/wsdl/"
+  xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+  xmlns:tns="http://library.example.com/loan"
+  xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+
+  <!-- Types -->
+  <types>
+    <xsd:schema targetNamespace="http://library.example.com/loan">
+      
+      <!-- Loan Type -->
+      <xsd:complexType name="Loan">
+        <xsd:sequence>
+          <xsd:element name="id" type="xsd:long"/>
+          <xsd:element name="userId" type="xsd:long"/>
+          <xsd:element name="bookId" type="xsd:long"/>
+          <xsd:element name="loanDate" type="xsd:string"/>
+          <xsd:element name="dueDate" type="xsd:string"/>
+          <xsd:element name="returnDate" type="xsd:string" minOccurs="0"/>
+          <xsd:element name="status" type="xsd:string"/>
+        </xsd:sequence>
+      </xsd:complexType>
+
+      <!-- Create Loan Request -->
+      <xsd:element name="createLoanRequest">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element name="userId" type="xsd:long"/>
+            <xsd:element name="bookId" type="xsd:long"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+
+      <!-- Create Loan Response -->
+      <xsd:element name="createLoanResponse">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element name="success" type="xsd:boolean"/>
+            <xsd:element name="message" type="xsd:string"/>
+            <xsd:element name="loan" type="tns:Loan" minOccurs="0"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+
+      <!-- Return Loan Request -->
+      <xsd:element name="returnLoanRequest">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element name="loanId" type="xsd:long"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+
+      <!-- Return Loan Response -->
+      <xsd:element name="returnLoanResponse">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element name="success" type="xsd:boolean"/>
+            <xsd:element name="message" type="xsd:string"/>
+            <xsd:element name="loan" type="tns:Loan" minOccurs="0"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+
+      <!-- Get Loans By User Request -->
+      <xsd:element name="getLoansByUserRequest">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element name="userId" type="xsd:long"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+
+      <!-- Get Loans By User Response -->
+      <xsd:element name="getLoansByUserResponse">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element name="success" type="xsd:boolean"/>
+            <xsd:element name="loans" type="tns:Loan" minOccurs="0" maxOccurs="unbounded"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+
+      <!-- Get Loan By ID Request -->
+      <xsd:element name="getLoanByIdRequest">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element name="loanId" type="xsd:long"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+
+      <!-- Get Loan By ID Response -->
+      <xsd:element name="getLoanByIdResponse">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element name="success" type="xsd:boolean"/>
+            <xsd:element name="message" type="xsd:string"/>
+            <xsd:element name="loan" type="tns:Loan" minOccurs="0"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+
+      <!-- Get All Loans Request -->
+      <xsd:element name="getAllLoansRequest">
+        <xsd:complexType>
+          <xsd:sequence/>
+        </xsd:complexType>
+      </xsd:element>
+
+      <!-- Get All Loans Response -->
+      <xsd:element name="getAllLoansResponse">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element name="success" type="xsd:boolean"/>
+            <xsd:element name="loans" type="tns:Loan" minOccurs="0" maxOccurs="unbounded"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+
+    </xsd:schema>
+  </types>
+
+  <!-- Messages -->
+  <message name="createLoanInput">
+    <part name="parameters" element="tns:createLoanRequest"/>
+  </message>
+  <message name="createLoanOutput">
+    <part name="parameters" element="tns:createLoanResponse"/>
+  </message>
+
+  <message name="returnLoanInput">
+    <part name="parameters" element="tns:returnLoanRequest"/>
+  </message>
+  <message name="returnLoanOutput">
+    <part name="parameters" element="tns:returnLoanResponse"/>
+  </message>
+
+  <message name="getLoansByUserInput">
+    <part name="parameters" element="tns:getLoansByUserRequest"/>
+  </message>
+  <message name="getLoansByUserOutput">
+    <part name="parameters" element="tns:getLoansByUserResponse"/>
+  </message>
+
+  <message name="getLoanByIdInput">
+    <part name="parameters" element="tns:getLoanByIdRequest"/>
+  </message>
+  <message name="getLoanByIdOutput">
+    <part name="parameters" element="tns:getLoanByIdResponse"/>
+  </message>
+
+  <message name="getAllLoansInput">
+    <part name="parameters" element="tns:getAllLoansRequest"/>
+  </message>
+  <message name="getAllLoansOutput">
+    <part name="parameters" element="tns:getAllLoansResponse"/>
+  </message>
+
+  <!-- Port Type -->
+  <portType name="LoanServicePortType">
+    <operation name="createLoan">
+      <input message="tns:createLoanInput"/>
+      <output message="tns:createLoanOutput"/>
+    </operation>
+    <operation name="returnLoan">
+      <input message="tns:returnLoanInput"/>
+      <output message="tns:returnLoanOutput"/>
+    </operation>
+    <operation name="getLoansByUser">
+      <input message="tns:getLoansByUserInput"/>
+      <output message="tns:getLoansByUserOutput"/>
+    </operation>
+    <operation name="getLoanById">
+      <input message="tns:getLoanByIdInput"/>
+      <output message="tns:getLoanByIdOutput"/>
+    </operation>
+    <operation name="getAllLoans">
+      <input message="tns:getAllLoansInput"/>
+      <output message="tns:getAllLoansOutput"/>
+    </operation>
+  </portType>
+
+  <!-- Binding -->
+  <binding name="LoanServiceBinding" type="tns:LoanServicePortType">
+    <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+    
+    <operation name="createLoan">
+      <soap:operation soapAction="createLoan"/>
+      <input>
+        <soap:body use="literal"/>
+      </input>
+      <output>
+        <soap:body use="literal"/>
+      </output>
+    </operation>
+
+    <operation name="returnLoan">
+      <soap:operation soapAction="returnLoan"/>
+      <input>
+        <soap:body use="literal"/>
+      </input>
+      <output>
+        <soap:body use="literal"/>
+      </output>
+    </operation>
+
+    <operation name="getLoansByUser">
+      <soap:operation soapAction="getLoansByUser"/>
+      <input>
+        <soap:body use="literal"/>
+      </input>
+      <output>
+        <soap:body use="literal"/>
+      </output>
+    </operation>
+
+    <operation name="getLoanById">
+      <soap:operation soapAction="getLoanById"/>
+      <input>
+        <soap:body use="literal"/>
+      </input>
+      <output>
+        <soap:body use="literal"/>
+      </output>
+    </operation>
+
+    <operation name="getAllLoans">
+      <soap:operation soapAction="getAllLoans"/>
+      <input>
+        <soap:body use="literal"/>
+      </input>
+      <output>
+        <soap:body use="literal"/>
+      </output>
+    </operation>
+  </binding>
+
+  <!-- Service -->
+  <service name="LoanService">
+    <port name="LoanServicePort" binding="tns:LoanServiceBinding">
+      <soap:address location="http://localhost:8083/loan"/>
+    </port>
+  </service>
+
+</definitions>
