@@ -14,7 +14,7 @@ COPY . .
 RUN CGO_ENABLED=0 GOOS=linux go build -ldflags="-s -w" -o user_service .
 
 # Runner
-FROM alpine:3.18
+FROM alpine:latest
 
 WORKDIR /app
 COPY --from=builder /app/user_service .

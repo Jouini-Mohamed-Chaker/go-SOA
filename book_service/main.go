@@ -63,6 +63,8 @@ func main() {
 		log.Fatalf("could not connect to db after %d attempts: %v", maxAttempts, err)
 	}
 
+	log.Println("Book Service connected to database")
+
 	router := mux.NewRouter()
 	router.HandleFunc("/api/books/search", searchBookByTitle).Methods("GET")
 	router.HandleFunc("/api/books", getAllBooks).Methods("GET")

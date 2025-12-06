@@ -144,11 +144,6 @@ Ce projet consiste à créer un système simple pour gérer une bibliothèque. L
 - Exemples de requêtes SOAP
 - Instructions pour tester les services
 
-### 7.3 Tests (Optionnel mais recommandé)
-- Collection Postman pour tester REST
-- Exemples de requêtes SOAP (SoapUI ou curl)
-- Données de test pour la base de données
-
 ## 8. Scénarios d'Utilisation Simplifiés
 
 ### Scénario 1 : Emprunter un Livre

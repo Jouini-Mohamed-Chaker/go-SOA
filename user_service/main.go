@@ -61,6 +61,8 @@ func main() {
 		log.Fatalf("could not connect to db after %d attempts: %v", maxAttempts, err)
 	}
 
+	log.Println("User Service connected to database")
+
 	router := mux.NewRouter()
 	router.HandleFunc("/api/users", getAllUsers).Methods("GET")
 	router.HandleFunc("/api/users/{id}", getUserByID).Methods("GET")

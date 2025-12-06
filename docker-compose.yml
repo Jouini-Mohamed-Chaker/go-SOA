@@ -65,6 +65,28 @@ services:
     ports:
       - "8083:8083"
     restart: on-failure
+  auth_gateway:
+    build:
+      context: ./auth_gateway
+      dockerfile: Dockerfile
+    depends_on:
+      db:
+        condition: service_healthy
+      book_service:
+        condition: service_started
+      user_service:
+        condition: service_started
+      loan_service:
+        condition: service_started
+    environment:
+      DB_HOST: db
+      DB_PORT: "5432"
+      DB_USER: postgres
+      DB_PASSWORD: postgres
+      DB_NAME: library
+    ports:
+      - "8080:8080"
+    restart: on-failure
 
 volumes:
   db_data:

@@ -1,34 +1,29 @@
-# Build stage
+# Builder
 FROM golang:1.25-alpine AS builder
 
 WORKDIR /app
 
-# Copy go mod files
-COPY go.mod ./
-COPY go.sum* ./
-
-# Download dependencies
+# cache deps
+COPY go.mod go.sum ./
 RUN go mod download
 
-# Copy source code
+# copy source and build a static binary
 COPY . .
 
-# Build the application
-RUN CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -o main .
+# disable CGO and produce a small static binary
+RUN CGO_ENABLED=0 GOOS=linux go build -ldflags="-s -w" -o loan_service .
 
-# Final stage
+# Runner
 FROM alpine:latest
 
-RUN apk --no-cache add ca-certificates
-
-WORKDIR /root/
+WORKDIR /app
 
 # Copy the binary from builder
-COPY --from=builder /app/main .
+COPY --from=builder /app/loan_service .
 
 # Copy WSDL file 
 COPY loan.wsdl ./loan.wsdl
 
 EXPOSE 8083
 
-CMD ["./main"]
+CMD ["./loan_service"]
