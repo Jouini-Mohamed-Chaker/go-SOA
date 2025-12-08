@@ -14,13 +14,15 @@ import (
 	"time"
 
 	"github.com/golang-jwt/jwt/v5"
+	"github.com/gorilla/mux"
 	_ "github.com/lib/pq"
+	"github.com/rs/cors"
 	"golang.org/x/crypto/bcrypt"
 )
 
 var (
 	db        *sql.DB
-	jwtSecret = []byte("your-256-bit-secret-key-change-in-production")
+	jwtSecret = []byte("24abd7d0df965baabb514fc50c30f30a04e82ac50260700c35089ab593479015")
 )
 
 func main() {
@@ -50,18 +52,28 @@ func main() {
 
 	log.Println("Auth Gateway connected to database")
 
-	http.HandleFunc("/auth/login", handleLogin)
-	http.HandleFunc("/auth/register", handleRegister)
-	http.HandleFunc("/auth/validate", handleValidate)
-	http.HandleFunc("/api/books", jwtMiddleware(proxyBooks))
-	http.HandleFunc("/api/books/", jwtMiddleware(proxyBooks))
-	http.HandleFunc("/api/users", jwtMiddleware(proxyUsers))
-	http.HandleFunc("/api/users/", jwtMiddleware(proxyUsers))
-	http.HandleFunc("/api/loans", jwtMiddleware(proxyLoans))
-	http.HandleFunc("/api/loans/", jwtMiddleware(proxyLoans))
+	router := mux.NewRouter()
+	router.HandleFunc("/auth/login", handleLogin)
+	router.HandleFunc("/auth/register", handleRegister)
+	router.HandleFunc("/auth/validate", handleValidate)
+	router.HandleFunc("/api/books", jwtMiddleware(proxyBooks))
+	router.HandleFunc("/api/books/", jwtMiddleware(proxyBooks))
+	router.HandleFunc("/api/users", jwtMiddleware(proxyUsers))
+	router.HandleFunc("/api/users/", jwtMiddleware(proxyUsers))
+	router.HandleFunc("/api/loans", jwtMiddleware(proxyLoans))
+	router.HandleFunc("/api/loans/", jwtMiddleware(proxyLoans))
+
+	c := cors.New(cors.Options{
+		AllowedOrigins: []string{"*"},
+		AllowedMethods:   []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
+        AllowedHeaders:   []string{"Content-Type", "Authorization"},
+        AllowCredentials: true,
+	})
+
+	handler := c.Handler(router)
 
 	log.Println("Auth Gateway starting on :8080")
-	log.Fatal(http.ListenAndServe(":8080", nil))
+	log.Fatal(http.ListenAndServe(":8080", handler))
 }
 
 func getEnv(key, defaultValue string) string {

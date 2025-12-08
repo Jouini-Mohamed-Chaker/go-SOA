@@ -3,253 +3,120 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Library Management System</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <title>Auth Gateway API Frontend</title>
+    <link rel="stylesheet" href="style.css">
 </head>
-<body class="bg-gray-100">
-    <!-- Navigation -->
-    <nav class="bg-indigo-600 text-white shadow-lg">
-        <div class="container mx-auto px-4 py-4">
-            <div class="flex items-center justify-between">
-                <div class="flex items-center space-x-2">
-                    <i class="fas fa-book text-2xl"></i>
-                    <h1 class="text-2xl font-bold">Library Management System</h1>
+<body>
+    <div class="container">
+        <header>
+            <h1>Auth Gateway API</h1>
+            <p class="subtitle">Frontend for Authentication and API Management</p>
+            <div class="user-info" id="userInfo">
+                <div>
+                    <span class="status-indicator" id="authStatus"></span>
+                    <span id="authStatusText">Not authenticated</span>
                 </div>
+                <div id="userDetails"></div>
             </div>
-        </div>
-    </nav>
-
-    <!-- Main Content -->
-    <div class="container mx-auto px-4 py-8">
-        <!-- Tab Navigation -->
-        <div class="bg-white rounded-lg shadow-md mb-6">
-            <div class="flex border-b">
-                <button id="booksTab" class="tab-btn active px-6 py-3 font-semibold text-indigo-600 border-b-2 border-indigo-600">
-                    <i class="fas fa-book mr-2"></i>Books
-                </button>
-                <button id="usersTab" class="tab-btn px-6 py-3 font-semibold text-gray-600 hover:text-indigo-600">
-                    <i class="fas fa-users mr-2"></i>Users
-                </button>
-                <button id="loansTab" class="tab-btn px-6 py-3 font-semibold text-gray-600 hover:text-indigo-600">
-                    <i class="fas fa-exchange-alt mr-2"></i>Loans
-                </button>
-            </div>
-        </div>
-
-        <!-- Books Section -->
-        <div id="booksSection" class="tab-content">
-            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                <!-- Books List -->
-                <div class="lg:col-span-2">
-                    <div class="bg-white rounded-lg shadow-md p-6">
-                        <div class="flex justify-between items-center mb-4">
-                            <h2 class="text-xl font-bold text-gray-800">Books Library</h2>
-                            <button id="addBookBtn" class="bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700">
-                                <i class="fas fa-plus mr-2"></i>Add Book
-                            </button>
-                        </div>
-                        
-                        <!-- Search -->
-                        <div class="mb-4">
-                            <div class="flex gap-2">
-                                <input type="text" id="bookSearchInput" placeholder="Search by title..." 
-                                    class="flex-1 px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-600">
-                                <button id="bookSearchBtn" class="bg-gray-600 text-white px-4 py-2 rounded-lg hover:bg-gray-700">
-                                    <i class="fas fa-search"></i>
-                                </button>
-                                <button id="bookClearBtn" class="bg-gray-400 text-white px-4 py-2 rounded-lg hover:bg-gray-500">
-                                    Clear
-                                </button>
-                            </div>
-                        </div>
-
-                        <div id="booksList" class="space-y-3">
-                            <!-- Books will be loaded here -->
-                        </div>
-
-                        <!-- Pagination -->
-                        <div class="flex justify-between items-center mt-4">
-                            <button id="booksPrevPage" class="px-4 py-2 bg-gray-300 rounded-lg hover:bg-gray-400 disabled:opacity-50">
-                                Previous
-                            </button>
-                            <span id="booksPageInfo" class="text-gray-600">Page 1</span>
-                            <button id="booksNextPage" class="px-4 py-2 bg-gray-300 rounded-lg hover:bg-gray-400 disabled:opacity-50">
-                                Next
-                            </button>
-                        </div>
+        </header>
+        
+        <div class="main-content">
+            <div class="auth-section">
+                <h2>Authentication</h2>
+                
+                <div class="tab-container">
+                    <button class="tab active" data-tab="login">Login</button>
+                    <button class="tab" data-tab="register">Register</button>
+                    <button class="tab" data-tab="validate">Validate Token</button>
+                </div>
+                
+                <div class="tab-content active" id="login">
+                    <div class="form-group">
+                        <label for="loginUsername">Username</label>
+                        <input type="text" id="loginUsername" placeholder="Enter username" value="user1">
+                    </div>
+                    <div class="form-group">
+                        <label for="loginPassword">Password</label>
+                        <input type="password" id="loginPassword" placeholder="Enter password" value="pass123">
+                    </div>
+                    <button id="loginBtn" class="success">Login & Get Token</button>
+                    
+                    <div class="token-display hidden" id="loginToken">
+                        <strong>Token:</strong> <span id="tokenValue"></span>
                     </div>
                 </div>
-
-                <!-- Book Form -->
-                <div class="lg:col-span-1">
-                    <div class="bg-white rounded-lg shadow-md p-6 sticky top-4">
-                        <h3 id="bookFormTitle" class="text-xl font-bold text-gray-800 mb-4">Add New Book</h3>
-                        <form id="bookForm" class="space-y-3">
-                            <input type="hidden" id="bookId">
-                            <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-1">ISBN</label>
-                                <input type="text" id="bookIsbn" required 
-                                    class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-600">
-                            </div>
-                            <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-1">Title</label>
-                                <input type="text" id="bookTitle" required 
-                                    class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-600">
-                            </div>
-                            <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-1">Author</label>
-                                <input type="text" id="bookAuthor" required 
-                                    class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-600">
-                            </div>
-                            <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-1">Publish Year</label>
-                                <input type="number" id="bookYear" required 
-                                    class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-600">
-                            </div>
-                            <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-1">Category</label>
-                                <input type="text" id="bookCategory" required 
-                                    class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-600">
-                            </div>
-                            <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-1">Available Quantity</label>
-                                <input type="number" id="bookQuantity" required 
-                                    class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-600">
-                            </div>
-                            <div class="flex gap-2">
-                                <button type="submit" class="flex-1 bg-indigo-600 text-white py-2 rounded-lg hover:bg-indigo-700">
-                                    Save
-                                </button>
-                                <button type="button" id="cancelBookBtn" class="flex-1 bg-gray-400 text-white py-2 rounded-lg hover:bg-gray-500">
-                                    Cancel
-                                </button>
-                            </div>
-                        </form>
+                
+                <div class="tab-content" id="register">
+                    <div class="form-group">
+                        <label for="registerUsername">Username *</label>
+                        <input type="text" id="registerUsername" placeholder="Enter username" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="registerEmail">Email *</label>
+                        <input type="email" id="registerEmail" placeholder="Enter email" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="registerFirstName">First Name</label>
+                        <input type="text" id="registerFirstName" placeholder="Enter first name">
+                    </div>
+                    <div class="form-group">
+                        <label for="registerLastName">Last Name</label>
+                        <input type="text" id="registerLastName" placeholder="Enter last name">
+                    </div>
+                    <div class="form-group">
+                        <label for="registerPassword">Password *</label>
+                        <input type="password" id="registerPassword" placeholder="Enter password" required>
+                    </div>
+                    <button id="registerBtn">Register New User</button>
+                </div>
+                
+                <div class="tab-content" id="validate">
+                    <div class="form-group">
+                        <label for="validateToken">Token to Validate</label>
+                        <textarea id="validateToken" rows="4" placeholder="Paste JWT token here"></textarea>
+                    </div>
+                    <button id="validateBtn">Validate Token</button>
+                </div>
+            </div>
+            
+            <div class="api-section">
+                <h2>API Endpoints</h2>
+                
+                <div class="api-controls">
+                    <select id="apiEndpoint">
+                        <option value="books">GET /api/books - Get all books</option>
+                        <option value="books-search">GET /api/books/search - Search books</option>
+                        <option value="books-create">POST /api/books - Create book</option>
+                        <option value="users">GET /api/users - Get all users</option>
+                        <option value="users-create">POST /api/users - Create user</option>
+                        <option value="loans">GET /api/loans - Get all loans</option>
+                        <option value="loans-create">POST /api/loans - Create loan</option>
+                        <option value="loans-return">PUT /api/loans/{id}/return - Return loan</option>
+                        <option value="loans-user">GET /api/loans/user/{userId} - Get user's loans</option>
+                    </select>
+                    <button id="executeApi">Execute</button>
+                </div>
+                
+                <div id="apiParams">
+                    <!-- Dynamic parameter fields will be inserted here -->
+                </div>
+                
+                <div class="response-container">
+                    <div class="response-header">Response</div>
+                    <div class="response-body" id="apiResponse">
+                        Select an endpoint and click "Execute" to see results.
                     </div>
                 </div>
             </div>
         </div>
-
-        <!-- Users Section -->
-        <div id="usersSection" class="tab-content hidden">
-            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                <!-- Users List -->
-                <div class="lg:col-span-2">
-                    <div class="bg-white rounded-lg shadow-md p-6">
-                        <div class="flex justify-between items-center mb-4">
-                            <h2 class="text-xl font-bold text-gray-800">Users</h2>
-                            <button id="addUserBtn" class="bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700">
-                                <i class="fas fa-plus mr-2"></i>Add User
-                            </button>
-                        </div>
-
-                        <div id="usersList" class="space-y-3">
-                            <!-- Users will be loaded here -->
-                        </div>
-
-                        <!-- Pagination -->
-                        <div class="flex justify-between items-center mt-4">
-                            <button id="usersPrevPage" class="px-4 py-2 bg-gray-300 rounded-lg hover:bg-gray-400 disabled:opacity-50">
-                                Previous
-                            </button>
-                            <span id="usersPageInfo" class="text-gray-600">Page 1</span>
-                            <button id="usersNextPage" class="px-4 py-2 bg-gray-300 rounded-lg hover:bg-gray-400 disabled:opacity-50">
-                                Next
-                            </button>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- User Form -->
-                <div class="lg:col-span-1">
-                    <div class="bg-white rounded-lg shadow-md p-6 sticky top-4">
-                        <h3 id="userFormTitle" class="text-xl font-bold text-gray-800 mb-4">Add New User</h3>
-                        <form id="userForm" class="space-y-3">
-                            <input type="hidden" id="userId">
-                            <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-1">Username</label>
-                                <input type="text" id="userUsername" required 
-                                    class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-600">
-                            </div>
-                            <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-1">Email</label>
-                                <input type="email" id="userEmail" required 
-                                    class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-600">
-                            </div>
-                            <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-1">First Name</label>
-                                <input type="text" id="userFirstName" required 
-                                    class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-600">
-                            </div>
-                            <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-1">Last Name</label>
-                                <input type="text" id="userLastName" required 
-                                    class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-600">
-                            </div>
-                            <div class="flex gap-2">
-                                <button type="submit" class="flex-1 bg-indigo-600 text-white py-2 rounded-lg hover:bg-indigo-700">
-                                    Save
-                                </button>
-                                <button type="button" id="cancelUserBtn" class="flex-1 bg-gray-400 text-white py-2 rounded-lg hover:bg-gray-500">
-                                    Cancel
-                                </button>
-                            </div>
-                        </form>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Loans Section -->
-        <div id="loansSection" class="tab-content hidden">
-            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                <!-- Loans List -->
-                <div class="lg:col-span-2">
-                    <div class="bg-white rounded-lg shadow-md p-6">
-                        <div class="flex justify-between items-center mb-4">
-                            <h2 class="text-xl font-bold text-gray-800">Loans</h2>
-                            <button id="addLoanBtn" class="bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700">
-                                <i class="fas fa-plus mr-2"></i>Create Loan
-                            </button>
-                        </div>
-
-                        <div id="loansList" class="space-y-3">
-                            <!-- Loans will be loaded here -->
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Loan Form -->
-                <div class="lg:col-span-1">
-                    <div class="bg-white rounded-lg shadow-md p-6 sticky top-4">
-                        <h3 class="text-xl font-bold text-gray-800 mb-4">Create New Loan</h3>
-                        <form id="loanForm" class="space-y-3">
-                            <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-1">User ID</label>
-                                <input type="number" id="loanUserId" required 
-                                    class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-600">
-                            </div>
-                            <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-1">Book ID</label>
-                                <input type="number" id="loanBookId" required 
-                                    class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-600">
-                            </div>
-                            <button type="submit" class="w-full bg-indigo-600 text-white py-2 rounded-lg hover:bg-indigo-700">
-                                Create Loan
-                            </button>
-                        </form>
-                    </div>
-                </div>
-            </div>
-        </div>
+        
+        <footer>
+            <p>Auth Gateway API Frontend | Base URL: http://localhost:8080</p>
+            <p>Token expires in 10 hours | All protected endpoints require Authorization header</p>
+        </footer>
     </div>
+    
+    <div id="notification" class="notification hidden"></div>
 
-    <!-- Toast Notification -->
-    <div id="toast" class="fixed bottom-4 right-4 bg-gray-800 text-white px-6 py-3 rounded-lg shadow-lg hidden">
-        <p id="toastMessage"></p>
-    </div>
-
-    <script src="app.js"></script>
-</body>
+    <script src="main.js"></script>
 </html>

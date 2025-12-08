@@ -3,9 +3,9 @@
 
 -- Drop tables if they exist (for clean re-initialization)
 DROP TABLE IF EXISTS loans CASCADE;
+DROP TABLE IF EXISTS user_credentials CASCADE;
 DROP TABLE IF EXISTS books CASCADE;
 DROP TABLE IF EXISTS users CASCADE;
-DROP TABLE IF EXISTS user_credentials;
 
 -- Create Users Table
 CREATE TABLE users (
@@ -27,6 +27,15 @@ CREATE TABLE books (
     available_quantity INTEGER DEFAULT 0
 );
 
+-- Create User Credentials Table
+CREATE TABLE user_credentials (
+    user_id INTEGER PRIMARY KEY REFERENCES users(id) ON DELETE CASCADE,
+    username VARCHAR(50) UNIQUE NOT NULL,
+    password_hash VARCHAR(255) NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
 -- Create Loans Table
 CREATE TABLE loans (
     id SERIAL PRIMARY KEY,
@@ -38,16 +47,6 @@ CREATE TABLE loans (
     status VARCHAR(20) NOT NULL CHECK (status IN ('ACTIVE', 'RETURNED'))
 );
 
--- Create User Credentials Table
-CREATE TABLE user_credentials (
-    user_id INTEGER PRIMARY KEY REFERENCES users(id) ON DELETE CASCADE,
-    username VARCHAR(50) UNIQUE NOT NULL,
-    password_hash VARCHAR(255) NOT NULL,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-);
-
-
 -- Create Indexes for Better Performance
 CREATE INDEX idx_books_title ON books(title);
 CREATE INDEX idx_books_isbn ON books(isbn);
@@ -55,7 +54,6 @@ CREATE INDEX idx_users_username ON users(username);
 CREATE INDEX idx_loans_user_id ON loans(user_id);
 CREATE INDEX idx_loans_book_id ON loans(book_id);
 CREATE INDEX idx_loans_status ON loans(status);
-
 
 -- Insert Sample Users
 INSERT INTO users (username, email, first_name, last_name) VALUES
@@ -90,3 +88,4 @@ SELECT COUNT(*) AS total_users FROM users;
 SELECT COUNT(*) AS total_books FROM books;
 SELECT COUNT(*) AS total_loans FROM loans;
 SELECT COUNT(*) AS active_loans FROM loans WHERE status = 'ACTIVE';
+SELECT COUNT(*) AS users_with_credentials FROM user_credentials;
