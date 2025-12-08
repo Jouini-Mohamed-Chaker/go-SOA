@@ -57,17 +57,17 @@ func main() {
 	router.HandleFunc("/auth/register", handleRegister)
 	router.HandleFunc("/auth/validate", handleValidate)
 	router.HandleFunc("/api/books", jwtMiddleware(proxyBooks))
-	router.HandleFunc("/api/books/", jwtMiddleware(proxyBooks))
+	router.PathPrefix("/api/books/").HandlerFunc(jwtMiddleware(proxyBooks))
 	router.HandleFunc("/api/users", jwtMiddleware(proxyUsers))
-	router.HandleFunc("/api/users/", jwtMiddleware(proxyUsers))
+	router.PathPrefix("/api/users/").HandlerFunc(jwtMiddleware(proxyUsers))
 	router.HandleFunc("/api/loans", jwtMiddleware(proxyLoans))
-	router.HandleFunc("/api/loans/", jwtMiddleware(proxyLoans))
+	router.PathPrefix("/api/loans/").HandlerFunc(jwtMiddleware(proxyLoans))
 
 	c := cors.New(cors.Options{
-		AllowedOrigins: []string{"*"},
+		AllowedOrigins:   []string{"*"},
 		AllowedMethods:   []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
-        AllowedHeaders:   []string{"Content-Type", "Authorization"},
-        AllowCredentials: true,
+		AllowedHeaders:   []string{"Content-Type", "Authorization"},
+		AllowCredentials: true,
 	})
 
 	handler := c.Handler(router)

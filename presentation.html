@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Présentation Projet Bibliothèque</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Petits ajustements pour la transition entre les slides */
+        .slide {
+            display: none; /* Caché par défaut */
+        }
+        .slide.active {
+            display: flex; /* Visible si actif */
+            animation: fadeIn 0.5s ease-in-out;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+    </style>
+</head>
+<body class="bg-slate-900 h-screen flex flex-col items-center justify-center overflow-hidden font-sans">
+
+    <div class="relative w-full max-w-5xl aspect-video bg-white rounded-2xl shadow-2xl overflow-hidden border border-slate-700">
+
+        <div class="slide active h-full w-full flex-col justify-center items-center p-12 text-center bg-gradient-to-br from-blue-50 to-indigo-100">
+            <div class="mb-8 p-4 bg-blue-600 text-white rounded-full inline-block">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-16 h-16">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M12 21v-8.25M15.75 21v-8.25M8.25 21v-8.25M3 9l9-6 9 6m-1.5 12V10.332A48.36 48.36 0 0 0 12 9.75c-2.551 0-5.056.2-7.5.582V21M3 21h18M12 6.75h.008v.008H12V6.75Z" />
+                </svg>
+            </div>
+            <h1 class="text-5xl font-extrabold text-slate-800 mb-6">Système de Gestion de Bibliothèque</h1>
+            <h2 class="text-3xl text-blue-600 font-semibold">Architecture Microservices</h2>
+            <p class="text-xl text-slate-600 mt-8 max-w-2xl mx-auto">Une approche moderne et modulaire pour gérer les livres, les utilisateurs et les emprunts.</p>
+        </div>
+
+        <div class="slide h-full w-full flex-col p-12 bg-white">
+            <h2 class="text-4xl font-bold text-slate-800 mb-8 border-b pb-4">Architecture Globale : Comment ça marche ?</h2>
+            <div class="flex flex-col md:flex-row items-center gap-12 h-full">
+                 <div class="flex-1 space-y-6">
+                    <ul class="space-y-4 text-xl text-slate-700">
+                        <li class="flex items-center"><span class="bg-blue-100 text-blue-800 p-2 rounded-lg mr-4">1</span> Division en 4 services indépendants.</li>
+                        <li class="flex items-center"><span class="bg-blue-100 text-blue-800 p-2 rounded-lg mr-4">2</span> Une "Auth Gateway" comme point d'entrée unique.</li>
+                        <li class="flex items-center"><span class="bg-blue-100 text-blue-800 p-2 rounded-lg mr-4">3</span> Chaque service a un rôle précis.</li>
+                        <li class="flex items-center"><span class="bg-blue-100 text-blue-800 p-2 rounded-lg mr-4">4</span> Base de données centrale PostgreSQL.</li>
+                    </ul>
+                 </div>
+                 <div class="flex-1 bg-slate-50 p-6 rounded-xl border border-slate-200 flex flex-col items-center">
+                    <div class="bg-purple-600 text-white p-3 rounded-lg mb-2 w-3/4 text-center font-bold">Client (Frontend)</div>
+                    <div class="text-2xl text-slate-400">↓</div>
+                    <div class="bg-red-600 text-white p-4 rounded-lg mb-2 w-3/4 text-center font-bold border-4 border-double">Gateway (Auth)</div>
+                    <div class="flex w-full justify-between text-2xl text-slate-400 px-8"><span>↙</span><span>↓</span><span>↘</span></div>
+                    <div class="flex gap-2 w-full justify-between">
+                        <div class="bg-blue-500 text-white p-2 rounded text-center text-sm flex-1">Livres (REST)</div>
+                        <div class="bg-blue-500 text-white p-2 rounded text-center text-sm flex-1">Users (REST)</div>
+                        <div class="bg-orange-500 text-white p-2 rounded text-center text-sm flex-1">Emprunts (SOAP)</div>
+                    </div>
+                     <div class="text-2xl text-slate-400 mt-2">↓</div>
+                    <div class="bg-green-600 text-white p-3 rounded-lg w-3/4 text-center font-bold">Base de Données (PostgreSQL)</div>
+                 </div>
+            </div>
+        </div>
+
+        <div class="slide h-full w-full flex-col p-12 bg-slate-50">
+             <h2 class="text-4xl font-bold text-slate-800 mb-12 border-b pb-4 text-center">La Stack Technique</h2>
+             <div class="grid grid-cols-2 gap-12 max-w-4xl mx-auto">
+                <div class="bg-white p-8 rounded-2xl shadow-lg flex items-center gap-6 border-l-8 border-cyan-500">
+                    <div class="text-5xl">🐹</div>
+                    <div>
+                        <h3 class="text-2xl font-bold text-slate-800">Go (Golang)</h3>
+                        <p class="text-slate-600">Langage principal des services. Choisi pour sa rapidité et sa performance.</p>
+                    </div>
+                </div>
+                 <div class="bg-white p-8 rounded-2xl shadow-lg flex items-center gap-6 border-l-8 border-blue-800">
+                    <div class="text-5xl">🐘</div>
+                    <div>
+                        <h3 class="text-2xl font-bold text-slate-800">PostgreSQL</h3>
+                        <p class="text-slate-600">Base de données relationnelle robuste pour stocker toutes les données.</p>
+                    </div>
+                </div>
+                 <div class="bg-white p-8 rounded-2xl shadow-lg flex items-center gap-6 border-l-8 border-blue-500">
+                    <div class="text-5xl">🐳</div>
+                    <div>
+                        <h3 class="text-2xl font-bold text-slate-800">Docker</h3>
+                        <p class="text-slate-600">Conteneurisation de chaque service pour un déploiement facile (Docker Compose).</p>
+                    </div>
+                </div>
+                 <div class="bg-white p-8 rounded-2xl shadow-lg flex items-center gap-6 border-l-8 border-orange-500">
+                    <div class="text-5xl">📡</div>
+                    <div>
+                        <h3 class="text-2xl font-bold text-slate-800">REST & SOAP</h3>
+                        <p class="text-slate-600">Communication : JSON (moderne) pour la majorité, XML (strict) pour les emprunts.</p>
+                    </div>
+                </div>
+             </div>
+        </div>
+
+        <div class="slide h-full w-full flex-col p-12 bg-white">
+            <div class="flex items-center mb-8 border-b pb-4">
+                <div class="bg-red-600 text-white p-3 rounded-lg mr-6">Port 8080</div>
+                <h2 class="text-4xl font-bold text-slate-800">Le Gardien : Auth Gateway API</h2>
+            </div>
+            <div class="flex gap-12 items-center h-full">
+                <div class="flex-1 space-y-8 text-xl text-slate-700 leading-relaxed">
+                    <p>C'est la <strong>porte d'entrée unique</strong> et le point de sécurité du système.</p>
+                    <ul class="list-disc pl-8 space-y-4">
+                        <li>Gère l'<strong>Inscription</strong> et la <strong>Connexion</strong> des utilisateurs.</li>
+                        <li>Délivre un jeton de sécurité (<strong>JWT</strong>) valide 10 heures.</li>
+                        <li><strong>Vérifie le jeton</strong> avant de laisser passer une demande vers les services protégés.</li>
+                    </ul>
+                </div>
+                <div class="flex-1 bg-red-50 p-8 rounded-xl border border-red-100 flex flex-col items-center justify-center">
+                    <div class="text-center">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-32 h-32 text-red-500 mx-auto mb-4">
+                          <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75 11.25 15 15 9.75M21 12c0 1.268-.63 2.39-1.593 3.068a3.745 3.745 0 0 1-1.043 3.296 3.745 3.745 0 0 1-3.296 1.043A3.745 3.745 0 0 1 12 21c-1.268 0-2.39-.63-3.068-1.593a3.746 3.746 0 0 1-3.296-1.043 3.745 3.745 0 0 1-1.043-3.296A3.745 3.745 0 0 1 3 12c0-1.268.63-2.39 1.593-3.068a3.745 3.745 0 0 1 1.043-3.296 3.746 3.746 0 0 1 3.296-1.043A3.746 3.746 0 0 1 12 3c1.268 0 2.39.63 3.068 1.593a3.746 3.746 0 0 1 3.296 1.043 3.746 3.746 0 0 1 1.043 3.296A3.745 3.745 0 0 1 21 12Z" />
+                        </svg>
+                        <p class="font-bold text-red-700 text-xl">Sécurité par Token JWT</p>
+                        <p class="text-sm text-red-500">"Montrez votre badge !"</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="slide h-full w-full flex-col p-12 bg-white">
+            <div class="flex items-center mb-8 border-b pb-4">
+                <div class="bg-blue-600 text-white p-3 rounded-lg mr-6">Port 8081</div>
+                <h2 class="text-4xl font-bold text-slate-800">Service des Livres (Catalogue)</h2>
+            </div>
+             <div class="grid grid-cols-2 gap-12">
+                 <div class="space-y-6">
+                    <p class="text-xl text-slate-700">Protocole : <strong>REST (JSON)</strong></p>
+                    <h3 class="text-2xl font-bold text-blue-800">Fonctionnalités CRUD :</h3>
+                    <ul class="list-disc pl-6 space-y-3 text-lg text-slate-700">
+                        <li>Voir la liste des livres (avec pagination).</li>
+                        <li><strong>Recherche</strong> par titre (ex: "Harry").</li>
+                        <li>Ajouter, Modifier, Supprimer un livre.</li>
+                    </ul>
+                 </div>
+                 <div class="bg-blue-50 p-6 rounded-xl border border-blue-200">
+                    <h3 class="text-xl font-bold text-blue-800 mb-4">Données d'un Livre (JSON)</h3>
+                    <pre class="bg-slate-800 text-green-400 p-4 rounded-lg text-sm overflow-x-auto">
+{
+  "isbn": "978-1234567890",
+  "title": "Titre du Livre",
+  "author": "Nom de l'Auteur",
+  "publishYear": 2023,
+  "category": "Roman",
+  "availableQuantity": 5
+}
+                    </pre>
+                    <p class="mt-4 text-sm text-blue-600 italic">*La quantité disponible est cruciale pour les emprunts.</p>
+                 </div>
+             </div>
+        </div>
+
+        <div class="slide h-full w-full flex-col p-12 bg-white">
+            <div class="flex items-center mb-8 border-b pb-4">
+                <div class="bg-blue-600 text-white p-3 rounded-lg mr-6">Port 8082</div>
+                <h2 class="text-4xl font-bold text-slate-800">Service des Utilisateurs (Membres)</h2>
+            </div>
+             <div class="flex gap-12 items-center">
+                 <div class="flex-1 space-y-6">
+                    <p class="text-xl text-slate-700">Protocole : <strong>REST (JSON)</strong></p>
+                    <h3 class="text-2xl font-bold text-blue-800">Rôle :</h3>
+                    <ul class="list-disc pl-6 space-y-3 text-lg text-slate-700">
+                        <li>Gérer les profils des membres.</li>
+                        <li>Assurer que chaque <strong>email</strong> et <strong>nom d'utilisateur</strong> est unique.</li>
+                        <li>Sert à identifier "qui" emprunte un livre.</li>
+                    </ul>
+                 </div>
+                  <div class="flex-1 bg-blue-50 p-8 rounded-xl border border-blue-100 flex justify-center">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-48 h-48 text-blue-400">
+                          <path stroke-linecap="round" stroke-linejoin="round" d="M15 19.128a9.38 9.38 0 0 0 2.625.372 9.337 9.337 0 0 0 4.121-.952 4.125 4.125 0 0 0-7.533-2.493M15 19.128v-.003c0-1.113-.285-2.16-.786-3.07M15 19.128v.106A12.318 12.318 0 0 1 8.624 21c-2.331 0-4.512-.645-6.374-1.766l-.001-.109a6.375 6.375 0 0 1 11.964-3.07M12 6.375a3.375 3.375 0 1 1-6.75 0 3.375 3.375 0 0 1 6.75 0Zm8.25 2.25a2.625 2.625 0 1 1-5.25 0 2.625 2.625 0 0 1 5.25 0Z" />
+                        </svg>
+                  </div>
+             </div>
+        </div>
+
+        <div class="slide h-full w-full flex-col p-12 bg-white">
+            <div class="flex items-center mb-8 border-b pb-4">
+                <div class="bg-orange-500 text-white p-3 rounded-lg mr-6">Port 8083</div>
+                <h2 class="text-4xl font-bold text-slate-800">Service des Emprunts (Le Spécial)</h2>
+            </div>
+            <div class="grid grid-cols-2 gap-12">
+                <div class="space-y-6">
+                   <div class="bg-orange-100 text-orange-800 p-4 rounded-lg text-xl">
+                       <strong>Particularité :</strong> Utilise le protocole <strong>SOAP (XML)</strong>. C'est plus strict et ancien que REST.
+                   </div>
+                   <h3 class="text-2xl font-bold text-orange-800">Règles Métier Automatiques :</h3>
+                   <ul class="list-disc pl-6 space-y-4 text-lg text-slate-700">
+                       <li><strong>Création d'emprunt :</strong> Vérifie si le livre est disponible (quantité > 0).</li>
+                       <li><strong>Durée :</strong> Fixe automatiquement la date de retour à <strong>14 jours</strong> plus tard.</li>
+                       <li><strong>Gestion de stock :</strong> Diminue la quantité du livre de 1 à l'emprunt, et l'augmente de 1 au retour.</li>
+                   </ul>
+                </div>
+                <div class="bg-orange-50 p-6 rounded-xl border border-orange-200 flex flex-col justify-center">
+                    <h3 class="text-xl font-bold text-orange-800 mb-4 text-center">Exemple de requête SOAP (XML)</h3>
+                     <pre class="bg-slate-800 text-orange-300 p-4 rounded-lg text-xs overflow-x-auto">
+&lt;soap:Envelope&gt;
+  &lt;soap:Body&gt;
+    &lt;createLoanRequest&gt;
+      &lt;userId&gt;123&lt;/userId&gt;
+      &lt;bookId&gt;456&lt;/bookId&gt;
+    &lt;/createLoanRequest&gt;
+  &lt;/soap:Body&gt;
+&lt;/soap:Envelope&gt;
+                     </pre>
+                </div>
+            </div>
+        </div>
+
+        <div class="slide h-full w-full flex-col p-12 bg-white">
+            <h2 class="text-4xl font-bold text-slate-800 mb-12 border-b pb-4 text-center">La Base de Données (PostgreSQL)</h2>
+            <div class="flex flex-col lg:flex-row items-center gap-12 justify-center h-full">
+                <div class="space-y-6 flex-1">
+                    <p class="text-xl text-slate-700 mb-6">Une seule base de données relationnelle contenant 4 tables principales reliées entre elles :</p>
+                    <div class="grid grid-cols-2 gap-4">
+                        <div class="bg-indigo-100 p-4 rounded-lg text-indigo-900 font-semibold">1. Users (Clients)</div>
+                        <div class="bg-blue-100 p-4 rounded-lg text-blue-900 font-semibold">2. Books (Inventaire)</div>
+                        <div class="bg-orange-100 p-4 rounded-lg text-orange-900 font-semibold">3. Loans (Emprunts)</div>
+                        <div class="bg-red-100 p-4 rounded-lg text-red-900 font-semibold">4. Credentials (Sécurité)</div>
+                    </div>
+                </div>
+                <div class="flex-1 bg-slate-50 p-8 rounded-xl border border-slate-200 flex items-center justify-center">
+                    <div class="relative w-full max-w-md h-64 md:h-auto">
+                        <div class="absolute top-0 left-0 bg-indigo-200 border-2 border-indigo-400 p-4 rounded w-32 text-center font-bold z-10">Users</div>
+                        <div class="absolute top-0 right-0 bg-blue-200 border-2 border-blue-400 p-4 rounded w-32 text-center font-bold z-10">Books</div>
+                        <div class="absolute bottom-0 left-1/2 transform -translate-x-1/2 bg-orange-200 border-2 border-orange-400 p-4 rounded w-32 text-center font-bold z-10">Loans</div>
+                        
+                        <div class="absolute top-8 left-16 right-16 h-32 border-b-4 border-r-4 border-l-4 border-slate-300 rounded-b-3xl pointer-events-none"></div>
+                         <div class="absolute bottom-16 left-1/2 h-8 border-l-4 border-slate-300 pointer-events-none"></div>
+                         <div class="absolute inset-0 flex items-center justify-center pointer-events-none"><span class="bg-white px-2 text-slate-500 text-sm font-bold">Relations (Clés étrangères)</span></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+         <div class="slide h-full w-full flex-col p-12 bg-gradient-to-r from-slate-50 to-blue-50">
+            <h2 class="text-4xl font-bold text-slate-800 mb-12 border-b pb-4 text-center">Scénario : Emprunter un livre</h2>
+            <div class="max-w-4xl mx-auto space-y-6">
+                <div class="flex items-center bg-white p-6 rounded-2xl shadow-md border-l-8 border-red-500">
+                    <div class="text-4xl mr-6">1️⃣</div>
+                    <div>
+                        <h3 class="text-xl font-bold text-slate-800">Connexion</h3>
+                        <p class="text-slate-600">L'utilisateur se connecte sur le Gateway et reçoit son <strong>Token JWT</strong>.</p>
+                    </div>
+                </div>
+                <div class="flex items-center bg-white p-6 rounded-2xl shadow-md border-l-8 border-blue-500">
+                    <div class="text-4xl mr-6">2️⃣</div>
+                    <div>
+                        <h3 class="text-xl font-bold text-slate-800">Recherche</h3>
+                        <p class="text-slate-600">Il cherche un livre disponible via le Gateway (qui interroge le Service Livres).</p>
+                    </div>
+                </div>
+                <div class="flex items-center bg-white p-6 rounded-2xl shadow-md border-l-8 border-orange-500">
+                    <div class="text-4xl mr-6">3️⃣</div>
+                    <div>
+                        <h3 class="text-xl font-bold text-slate-800">Demande d'emprunt</h3>
+                        <p class="text-slate-600">Il demande l'emprunt via le Gateway (qui interroge le Service Emprunts en SOAP).</p>
+                    </div>
+                </div>
+                <div class="flex items-center bg-white p-6 rounded-2xl shadow-md border-l-8 border-green-500">
+                    <div class="text-4xl mr-6">✅</div>
+                    <div>
+                        <h3 class="text-xl font-bold text-slate-800">Validation automatique</h3>
+                        <p class="text-slate-600">Le système vérifie le stock, crée l'emprunt, fixe la date de retour et réduit la quantité du livre.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="slide h-full w-full flex-col justify-center items-center p-12 text-center bg-slate-800 text-white">
+            <h2 class="text-4xl font-bold mb-12">En Résumé</h2>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-5xl mb-12">
+                <div class="bg-slate-700 p-8 rounded-2xl">
+                    <div class="text-4xl mb-4">🚀</div>
+                    <h3 class="text-xl font-bold mb-2">Moderne & Évolutif</h3>
+                    <p class="text-slate-300">Architecture microservices prête pour l'avenir.</p>
+                </div>
+                <div class="bg-slate-700 p-8 rounded-2xl">
+                    <div class="text-4xl mb-4">🔄</div>
+                    <h3 class="text-xl font-bold mb-2">Hybride</h3>
+                    <p class="text-slate-300">Mélange intelligent de REST (flexibilité) et SOAP (rigueur).</p>
+                </div>
+                 <div class="bg-slate-700 p-8 rounded-2xl">
+                    <div class="text-4xl mb-4">📦</div>
+                    <h3 class="text-xl font-bold mb-2">Facile à déployer</h3>
+                    <p class="text-slate-300">Conteneurisation complète avec Docker.</p>
+                </div>
+            </div>
+            <p class="text-2xl font-semibold text-blue-400">Merci de votre attention !</p>
+        </div>
+
+
+        <button id="prevBtn" class="absolute left-4 top-1/2 transform -translate-y-1/2 bg-slate-800/50 hover:bg-blue-600 text-white p-4 rounded-full transition backdrop-blur-sm z-10 disabled:opacity-30 disabled:cursor-not-allowed">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="w-8 h-8">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5 8.25 12l7.5-7.5" />
+            </svg>
+        </button>
+        <button id="nextBtn" class="absolute right-4 top-1/2 transform -translate-y-1/2 bg-slate-800/50 hover:bg-blue-600 text-white p-4 rounded-full transition backdrop-blur-sm z-10 disabled:opacity-30 disabled:cursor-not-allowed">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="w-8 h-8">
+              <path stroke-linecap="round" stroke-linejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5" />
+            </svg>
+        </button>
+        <div class="absolute bottom-4 left-1/2 transform -translate-x-1/2 bg-slate-800/70 text-white px-4 py-2 rounded-full text-sm font-semibold backdrop-blur-sm z-10">
+            Slide <span id="currentSlideNum">1</span> / <span id="totalSlidesNum">10</span>
+        </div>
+    </div>
+
+    <script>
+        // Sélection des éléments du DOM
+        const slides = document.querySelectorAll('.slide');
+        const prevBtn = document.getElementById('prevBtn');
+        const nextBtn = document.getElementById('nextBtn');
+        const currentSlideNumSpan = document.getElementById('currentSlideNum');
+        const totalSlidesNumSpan = document.getElementById('totalSlidesNum');
+
+        let currentSlideIndex = 0;
+        const totalSlides = slides.length;
+
+        // Initialisation du compteur total
+        totalSlidesNumSpan.textContent = totalSlides;
+
+        // Fonction pour afficher une slide spécifique
+        function showSlide(index) {
+            // Masquer toutes les slides et enlever la classe 'active'
+            slides.forEach(slide => {
+                slide.classList.remove('active');
+            });
+
+            // Afficher la slide courante en ajoutant la classe 'active'
+            slides[index].classList.add('active');
+
+            // Mettre à jour le compteur
+            currentSlideNumSpan.textContent = index + 1;
+
+            // Gérer l'état des boutons (activé/désactivé)
+            prevBtn.disabled = index === 0;
+            nextBtn.disabled = index === totalSlides - 1;
+        }
+
+        // Écouteurs d'événements pour les boutons
+        nextBtn.addEventListener('click', () => {
+            if (currentSlideIndex < totalSlides - 1) {
+                currentSlideIndex++;
+                showSlide(currentSlideIndex);
+            }
+        });
+
+        prevBtn.addEventListener('click', () => {
+            if (currentSlideIndex > 0) {
+                currentSlideIndex--;
+                showSlide(currentSlideIndex);
+            }
+        });
+
+        // Navigation au clavier (Flèches Gauche/Droite)
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowRight' && currentSlideIndex < totalSlides - 1) {
+                currentSlideIndex++;
+                showSlide(currentSlideIndex);
+            } else if (e.key === 'ArrowLeft' && currentSlideIndex > 0) {
+                currentSlideIndex--;
+                showSlide(currentSlideIndex);
+            }
+        });
+
+        // Afficher la première slide au chargement
+        showSlide(currentSlideIndex);
+    </script>
+</body>
+</html>
